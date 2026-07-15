@@ -102,13 +102,35 @@ ORDER BY
   resale_price DESC;
 ```
 
-**Exercise:**
+👋 **Exercise:**
 - Select any 3 columns from the table.
 - Select flats from highest to lowest resale price in Punggol.
 
 > **What's Your Query?**
 > "If our table had 100 columns and a million rows, what would happen to our computer's memory if we always used `SELECT *`?"
-
+>
+> `SELECT *` pull all 100 columns for every row into memory, even columns you never need. With million rows, extra unused columns multiply memory use and network/disk transfer massively — could mean gigabytes wasted, slow query, risk of running out of RAM or crashing client app. Better: select only needed columns, e.g. `SELECT flat_type, resale_price FROM ...` — cuts memory and speeds query way down.
+> 
+> **Assumptions**
+>
+> 100 columns, 1,000,000 rows = 100,000,000 cells total
+> Average cell size ~20 bytes (mix of ints, floats, short strings — raw bytes, no overhead)
+> **Raw data size**
+> 100M cells × 20 bytes = 2,000,000,000 bytes ≈ 1.9 GB
+>
+> **Reality check — in-memory overhead**
+> Raw bytes ≠ actual RAM used. In Python/pandas, each value carries object overhead:
+>
+> Pandas object dtype (strings): ~50-80 bytes/cell overhead alone
+> If most columns are numeric (int64/float64): 8 bytes/cell, closer to raw estimate
+> Plus index, dtype metadata, duplicated buffers during operations (copy on filter/sort)
+Realistic range
+>
+> **All-numeric table:** ~1-2 GB
+> Mixed with several string/object columns: 3-6 GB, since pandas object columns cost 5-10x raw size
+> 
+> **Takeaway:** even "just 1.9 GB" of raw data can balloon to several GB in memory depending on dtypes — and that's before doing any transform that copies the DataFrame. Selecting only needed columns cuts this proportionally (e.g. 5 columns instead of 100 → ~20x less memory).
+>
 ---
 
 ### 🛠️ Workshop — Task 2: Transformations & Filtering
@@ -122,6 +144,8 @@ ORDER BY
 | `*` | Multiplication |
 | `/` | Division |
 | `%` | Modulo |
+
+> **Modulo (`%`)** returns remainder after division, not quotient. Example: `10 % 3` = `1` (3 goes into 10 three times, remainder 1). Common use: check even/odd (`x % 2 = 0` means even), or group rows into buckets (`row_num % 5` cycles 0-4).
 
 Example — calculate price in thousands and rename for clarity:
 
@@ -138,9 +162,10 @@ ORDER BY
   resale_price DESC;
 ```
 
-**Exercise:**
+👋👋👋 **Group Exercise:**
 
-"I want to find a home for my parents. They need something larger than 100sqm, but my budget is strictly under $600,000. How would we write that rule?"
+- "I want to find a home for my parents. They need something larger than 100sqm, but my budget is strictly under $600,000. How would we write that rule?"
+- Define your own filter for flats in a specific town, with a price range and floor area requirement etc. Then sort the results by resale price (highest first) and floor area (largest first).
 
 > **What's Your Query?**
 
@@ -169,10 +194,10 @@ WHERE
   town = 'BUKIT MERAH';
 ```
 
-> **Exercise — basic filters:**
-> - Select flats with floor area greater than 100 sqm.
-> - Select flats with resale price between 400,000 and 500,000.
-> - Select flats with lease commence date later than year 2000 and floor area greater than 100 sqm.
+👋 **Exercise — basic filters:**
+- Select flats with floor area greater than 100 sqm.
+- Select flats with resale price between 400,000 and 500,000.
+- Select flats with lease commence date later than year 2000 and floor area greater than 100 sqm.
 
 **Advanced Filters:**
 
@@ -193,9 +218,9 @@ WHERE town LIKE 'B%';
 SELECT DISTINCT town FROM resale_flat_prices_2017;
 ```
 
-> **Optional Exercise:**
-> - Return the unique flat types and flat models.
-> - Find all towns starting with "P".
+👋 **Exercise:**
+- Return the unique flat types and flat models.
+- Find all towns starting with "P".
 
 **Functions:**
 
@@ -209,7 +234,7 @@ SELECT DISTINCT town FROM resale_flat_prices_2017;
 | `TRIM()` | Remove leading and trailing spaces |
 | `CONCAT()` | Concatenate strings |
 
-Example:
+**Example:**
 
 ```sql
 SELECT
@@ -222,7 +247,7 @@ FROM
 ### 💬 Reflection
 
 - Do SQL keywords need to be capitalized? Why do we use uppercase for them anyway?
-- How would a real estate app like PropertyGuru use these filters when a user moves a slider on their screen?
+- How would a real estate app or website use these filters when a user moves a slider on their screen?
 
 ---
 
@@ -288,9 +313,9 @@ GROUP BY
   town;
 ```
 
-> **Exercise:**
-> - Select the average resale price of flats in Bishan.
-> - Select the total resale value (price) of flats in Tampines.
+👋 **Exercise:**
+- Select the average resale price of flats in Bishan.
+- Select the total resale value (price) of flats in Tampines.
 
 ---
 
@@ -381,10 +406,10 @@ GROUP BY
   town, lease_commence_date;
 ```
 
-> **Exercise:**
-> - Select the average resale price by flat type.
-> - Select the average resale price by flat type and flat model.
-> - Select the average resale price by town and lease commence date, only for lease commence dates after year 2010, sorted by town (descending) and lease commence date (descending).
+👋👋👋 **Group Exercise:**
+- Select the average resale price by flat type.
+- Select the average resale price by flat type and flat model.
+- Select the average resale price by town and lease commence date, only for lease commence dates after year 2010, sorted by town (descending) and lease commence date (descending).
 
 ### 💬 Reflection
 
@@ -434,9 +459,9 @@ FROM
   resale_flat_prices_2017;
 ```
 
-> **Exercise:**
-> - Design your own "budget/mid/high-end" categories based on resale_price.
-> - Design a "old vs new" label based on lease_commence_date.
+👋👋👋 **Group Exercise:**
+- Design your own "budget/mid/high-end" categories based on resale_price.
+- Design a "old vs new" label based on lease_commence_date.
 
 ---
 
