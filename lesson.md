@@ -411,6 +411,11 @@ GROUP BY
 - Select the average resale price by flat type and flat model.
 - Select the average resale price by town and lease commence date, only for lease commence dates after year 2010, sorted by town (descending) and lease commence date (descending).
 
+👋 **Exercise — HAVING:**
+- Count transactions per town, then show only towns with more than 5,000 transactions.
+- Show the average floor area per flat type, but only for flat types whose average floor area is above 90 sqm.
+- Find towns where the maximum resale price exceeds $900,000, sorted highest first. (Hint: filter on `MAX(resale_price)` in `HAVING`.)
+
 ### 💬 Reflection
 
 - What happens if you forget the `GROUP BY` but use an `AVG()`?
@@ -510,6 +515,11 @@ FROM resale_flat_prices_2017;
 ```
 
 > **Question:** "If the `month` column is text `'2017-01'`, can we add 1 month to it directly? Why do we need to `CAST` it to a `DATE` type first?"
+
+👋 **Exercise — CAST:**
+- Show `resale_price` rounded down to the nearest thousand by casting to `INTEGER` (e.g. `resale_price / 1000` cast to `INTEGER`, then `* 1000`).
+- Convert the text `month` column to a real `DATE` and extract the transaction month number (1–12).
+- Cast `floor_area_sqm` to `INTEGER` and show it next to the original value — what happens to the decimals?
 
 **Optional — Changing the Table Schema:**
 
