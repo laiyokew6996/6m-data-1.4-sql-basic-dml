@@ -2,10 +2,15 @@
 
 **Goal:** Identify the most "undervalued" town.
 
-1. Find the average resale\_price per town.  
-2. Filter for towns where the average price is less than $450,000.  
-3. Within those towns, find the top 5 largest flats (by floor\_area\_sqm) currently available.  
-4. **Level Up:** Create a new column called price\_per\_sqm and find which town has the lowest average price per square meter.
+Work in two steps — everything you need was taught in this lesson:
+
+**Step A — Find the undervalued towns.** Write a `GROUP BY town` query with `HAVING AVG(resale_price) < 450000` to list towns where the average price is under $450,000. Run it and note down the town names.
+
+**Step B — Find the biggest flats in those towns.** Write a second query that filters flats using the town names you found, with a plain `WHERE town IN ('…', '…', …)`, then sort by floor\_area\_sqm descending and keep the top 5.
+
+**Level Up:** Create a new column called price\_per\_sqm and find which town has the lowest average price per square meter.
+
+**🚀 Stretch goal (Lesson 1.5 preview):** a *subquery* lets you nest both steps into one query — try it after the two-step way works.
 
 
 ---
@@ -63,11 +68,35 @@ Count the number of flats sold in each town during the first quarter of 2017 (Ja
 <details>
 <summary>Click to reveal — Project: The Property Analyst</summary>
 
-### Part 1: The Core Solution
-To find the top 5 largest flats in undervalued towns (average price < $450k), we use a Subquery. This allows us to first identify the "undervalued" list and then look inside that list for the biggest homes.
+### Part 1: The Core Solution (Two Steps)
+
+**Step A — find the undervalued towns:**
 
 ```sql
--- The Solution Query
+SELECT town
+FROM resale_flat_prices_2017
+GROUP BY town
+HAVING AVG(resale_price) < 450000;
+```
+
+Run it and note the town names it returns.
+
+**Step B — find the biggest flats in those towns** (substitute the names Step A gave you):
+
+```sql
+SELECT town, block, street_name, floor_area_sqm, resale_price
+FROM resale_flat_prices_2017
+WHERE town IN ('WOODLANDS', 'CHOA CHU KANG')  -- use YOUR Step A results
+ORDER BY floor_area_sqm DESC
+LIMIT 5;
+```
+
+### 🚀 Stretch goal (Lesson 1.5 preview)
+
+A *subquery* lets you nest both steps into one query — try it after the two-step way works. It allows us to first identify the "undervalued" list and then look inside that list for the biggest homes, all in one go.
+
+```sql
+-- The Stretch Solution Query
 SELECT 
     town, 
     block, 
