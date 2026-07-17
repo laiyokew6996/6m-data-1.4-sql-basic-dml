@@ -21,7 +21,7 @@ Write your SQL answers in the code blocks below each question. Check your work a
 Select the minimum and maximum price per sqm of all the flats.
 
 ```sql
-// Doing assignment q1
+
 ```
 
 ### Question 2
